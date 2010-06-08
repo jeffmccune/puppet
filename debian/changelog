@@ -1,3 +1,10 @@
+puppet (0.25.5-sg1) unstable; urgency=low
+
+  * New upstream version.
+  * Cherry-pick commit 722a27fd49fc2c5ac161.
+
+ -- Ian Eure <ian@simplegeo.com>  Tue, 08 Jun 2010 10:31:18 -0700
+
 puppet (0.25.4-2ubuntu6) lucid; urgency=low
 
   * Fix init service provider to correctly check the status of services
