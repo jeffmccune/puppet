@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby1.8
+
 require File.dirname(__FILE__) + '/../lib/puppettest'
 
 require 'puppet/util/pidlock'
