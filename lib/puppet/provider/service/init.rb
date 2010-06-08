@@ -134,7 +134,15 @@ Puppet::Type.type(:service).provide :init, :parent => :base do
     # we just return that; otherwise, we return false, which causes it to
     # fallback to other mechanisms.
     def statuscmd
-        (@resource[:hasstatus] == :true) && [initscript, :status]
+        if @resource[:hasstatus] == :true then 
+            # Workaround the fact that initctl status command doesn't return
+            # proper exit codes. Can be removed once LP: #552786 is fixed.
+            if File.symlink?(initscript) && File.readlink(initscript) == "/lib/init/upstart-job" then
+                ['sh', '-c', "LANG=C invoke-rc.d #{File::basename(initscript)} status | grep -q '^#{File::basename(initscript)}.*running'" ]
+            else
+                [initscript, :status ]
+            end
+        end
     end
 
 end

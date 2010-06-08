@@ -1,0 +1,95 @@
+Source: puppet
+Section: admin
+Priority: optional
+Maintainer: Ubuntu Developers <ubuntu-devel@lists.ubuntu.com>
+XSBC-Original-Maintainer: Puppet Package Maintainers <pkg-puppet-devel@lists.alioth.debian.org>
+Uploaders: Micah Anderson <micah@debian.org>, Andrew Pollock <apollock@debian.org>, Nigel Kersten <nigel@explanatorygap.net>, Stig Sandbeck Mathisen <ssm@debian.org>
+Build-Depends-Indep: ruby (>= 1.8.1), libopenssl-ruby, facter (>= 1.5)
+Build-Depends: debhelper (>= 5), openssl
+Standards-Version: 3.8.4
+Vcs-Git: git://git.debian.org/git/pkg-puppet/puppet.git
+Vcs-Browser: http://git.debian.org/?p=pkg-puppet/puppet.git
+Homepage: http://reductivelabs.com/trac/puppet
+
+Package: puppet
+Architecture: all
+Depends: ${misc:Depends}, ruby1.8, libxmlrpc-ruby, libopenssl-ruby, libshadow-ruby1.8, adduser, facter, lsb-base, puppet-common (= ${source:Version})
+Recommends: rdoc, libaugeas-ruby1.8
+Suggests: puppet-el, vim-puppet, etckeeper
+Description: centralised configuration management for networks
+ Puppet lets you centrally manage every important aspect of your system
+ using a cross-platform specification language that manages all the
+ separate elements normally aggregated in different files, like users,
+ cron jobs, and hosts, along with obviously discrete elements like
+ packages, services, and files.
+ .
+ Puppet's simple declarative specification language provides powerful
+ classing abilities for drawing out the similarities between hosts while
+ allowing them to be as specific as necessary, and it handles dependency
+ and prerequisite relationships between objects clearly and explicitly.
+
+Package: puppetmaster
+Architecture: all
+Depends: ${misc:Depends}, ruby1.8, puppet-common (= ${source:Version}), facter, lsb-base
+Conflicts: puppet (<< 0.24.7-1)
+Suggests: rails (>= 1.2.3-2), rdoc, libldap-ruby1.8, apache2 | nginx, mongrel, puppet-el, vim-puppet
+Description: centralised configuration management control daemon
+ Puppet lets you centrally manage every important aspect of your system
+ using a cross-platform specification language that manages all the
+ separate elements normally aggregated in different files, like users,
+ cron jobs, and hosts, along with obviously discrete elements like
+ packages, services, and files.
+ .
+ Puppet's simple declarative specification language provides powerful
+ classing abilities for drawing out the similarities between hosts while
+ allowing them to be as specific as necessary, and it handles dependency
+ and prerequisite relationships between objects clearly and explicitly.
+ .
+ This package contains the manifest server, 'puppetmaster'.
+
+Package: puppet-common
+Architecture: all
+Depends: ${misc:Depends}, ruby1.8, libxmlrpc-ruby, libopenssl-ruby, libshadow-ruby1.8, adduser
+Conflicts: puppet (<< ${source:Version}), puppetmaster (<< ${source:Version})
+Description: common files for puppet and puppetmaster
+ Puppet lets you centrally manage every important aspect of your system
+ using a cross-platform specification language that manages all the
+ separate elements normally aggregated in different files, like users,
+ cron jobs, and hosts, along with obviously discrete elements like
+ packages, services, and files.
+ .
+ Puppet's simple declarative specification language provides powerful
+ classing abilities for drawing out the similarities between hosts while
+ allowing them to be as specific as necessary, and it handles dependency
+ and prerequisite relationships between objects clearly and explicitly.
+ .
+ This package contains the files common to the 'puppet' and
+ 'puppetmaster' packages.
+
+Package: vim-puppet
+Architecture: all
+Depends: ${misc:Depends}
+Recommends: vim-addon-manager
+Conflicts: puppet (<< ${source:Version})
+Description: Vim syntax highlighting for puppet manifests
+ The vim-puppet package provides filetype detection and syntax highlighting for
+ puppet manifests (files ending with ".pp").
+
+Package: puppet-el
+Architecture: all
+Depends: ${misc:Depends}, emacsen-common
+Conflicts: puppet (<< ${source:Version})
+Description: Emacs syntax highlighting for puppet manifests
+ The puppet-el package provides syntax highlighting for puppet manifests
+
+Package: puppet-testsuite
+Architecture: all
+Depends: ${misc:Depends}, ruby1.8, puppet (= ${source:Version}), facter, lsb-base, rails (>= 1.2.3-2), rdoc, libldap-ruby1.8, mongrel, librspec-ruby, puppetmaster, git-core
+Description: centralized configuration management control for networks
+ Puppet lets you centrally manage every important aspect of your system
+ using a cross-platform specification language that manages all the
+ seperate elements normally aggregated in different files, like users,
+ cron jobs, and hosts, along with obviously discrete elements like
+ packages, services, and files.
+ .
+ This package contains the testsuite for puppet.

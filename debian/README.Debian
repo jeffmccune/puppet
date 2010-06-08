@@ -1,0 +1,8 @@
+puppet for Debian
+------------------
+
+The default puppet configuration in Debian will automatically integrate with
+etckeeper if etckeeper is installed. puppet will automatically commit any
+changes made to files in /etc via etckeeper before and after its run.
+
+ -- Mathias Gug <mathiaz@ubuntu.com>  Thu, 25 Feb 2010 12:12:37 -0500
