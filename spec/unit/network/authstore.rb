@@ -1,4 +1,5 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env ruby1.8
+# -*- coding: utf-8 -*-
 
 require File.dirname(__FILE__) + '/../../spec_helper'
 

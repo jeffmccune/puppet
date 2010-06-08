@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env ruby1.8
 #
 #  Created by Rick Bradley on 2007-10-15.
 #  Copyright (c) 2007. All rights reserved.

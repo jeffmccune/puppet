@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env ruby1.8
 
 require File.dirname(__FILE__) + '/../../spec_helper'
 require 'puppet/network/server'

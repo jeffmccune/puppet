@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env ruby1.8
 #
 #  Created by Luke Kanies on 2008-4-8.
 #  Copyright (c) 2008. All rights reserved.
