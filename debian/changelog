@@ -1,3 +1,9 @@
+puppet (0.25.5-sg39) lucid; urgency=low
+
+  * UNRELEASED
+
+ -- SimpleGeo Nerds <nerds@simplegeo.com>  Tue, 15 Jun 2010 22:59:24 +0000
+
 puppet (0.25.5-sg2) unstable; urgency=low
 
   * Fix hashbang lines: explicitly call `ruby1.8', add where they were
