@@ -131,6 +131,8 @@ module Manager
 
   # Create a loader for Puppet types.
   def typeloader
+    # JJM 2010-07-19 #4270 I suspect this is not called.
+    debugger
     unless defined?(@typeloader)
 
             @typeloader = Puppet::Util::Autoload.new(
