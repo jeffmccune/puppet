@@ -69,6 +69,9 @@ class Puppet::Parser::TypeLoader
   end
 
   def initialize(env)
+    # JJM 2010-07-19 #4270 This seems to be initialized multiple times
+    # With the wrong state.
+    debugger
     self.environment = env
     @loaded = {}
     @loading = Helper.new
