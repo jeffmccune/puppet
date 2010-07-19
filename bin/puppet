@@ -1,4 +1,10 @@
 #!/usr/bin/env ruby
 
+# JJM 2010-07-19 Debugging for #4270
+require 'rubygems'
+require 'ruby-debug'
+# JJM Start the debugger tracing early to get accurate back traces
+Debugger.start
+
 require 'puppet/util/command_line'
 Puppet::Util::CommandLine.new.execute
