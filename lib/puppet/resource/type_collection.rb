@@ -8,6 +8,7 @@ class Puppet::Resource::TypeCollection
   end
 
   def initialize(env)
+    debugger
     @environment = env.is_a?(String) ? Puppet::Node::Environment.new(env) : env
     @hostclasses = {}
     @definitions = {}
