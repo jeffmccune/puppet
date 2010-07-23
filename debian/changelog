@@ -1,3 +1,9 @@
+puppet (0.25.5-sg43) lucid; urgency=low
+
+  * UNRELEASED
+
+ -- SimpleGeo Nerds <nerds@simplegeo.com>  Fri, 23 Jul 2010 23:58:55 +0000
+
 puppet (0.25.5-sg42) lucid; urgency=low
 
   [ Paul Lathrop ]
