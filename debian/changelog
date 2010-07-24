@@ -1,3 +1,12 @@
+puppet (0.25.5-sg44) lucid; urgency=low
+
+  [ Paul Lathrop ]
+  * Actually load mongoquery
+
+  [ SimpleGeo Nerds ]
+
+ -- SimpleGeo Nerds <nerds@simplegeo.com>  Sat, 24 Jul 2010 00:00:55 +0000
+
 puppet (0.25.5-sg43) lucid; urgency=low
 
   * UNRELEASED
