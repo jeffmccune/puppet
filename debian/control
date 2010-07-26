@@ -49,7 +49,7 @@ Description: centralised configuration management control daemon
 
 Package: puppet-common
 Architecture: all
-Depends: ${misc:Depends}, ruby1.8, libxmlrpc-ruby, libopenssl-ruby, libshadow-ruby1.8, adduser, libmongo-ruby, libbson-ruby, libcbson-ruby
+Depends: ${misc:Depends}, ruby1.8, libxmlrpc-ruby, libopenssl-ruby, libshadow-ruby1.8, adduser, libmongo-ruby1.8, libbson-ruby1.8, libcbson-ruby1.8
 Conflicts: puppet (<< ${source:Version}), puppetmaster (<< ${source:Version})
 Description: common files for puppet and puppetmaster
  Puppet lets you centrally manage every important aspect of your system
