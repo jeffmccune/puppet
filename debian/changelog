@@ -1,3 +1,12 @@
+puppet (0.25.5-sg45) lucid; urgency=low
+
+  [ Paul Lathrop ]
+  * Require rubygems so the mongo query patch works.
+
+  [ SimpleGeo Nerds ]
+
+ -- SimpleGeo Nerds <nerds@simplegeo.com>  Sat, 24 Jul 2010 00:13:06 +0000
+
 puppet (0.25.5-sg44) lucid; urgency=low
 
   [ Paul Lathrop ]
