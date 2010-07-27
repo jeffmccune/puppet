@@ -1,4 +1,3 @@
-require 'rubygems'
 require 'mongo'
 
 class Puppet::Util::MongoQuery
