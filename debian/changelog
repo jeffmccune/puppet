@@ -1,3 +1,12 @@
+puppet (0.25.5-sg49) lucid; urgency=low
+
+  [ Paul Lathrop ]
+  * We don't use rubygems.
+
+  [ SimpleGeo Nerds ]
+
+ -- SimpleGeo Nerds <nerds@simplegeo.com>  Tue, 27 Jul 2010 18:23:52 +0000
+
 puppet (0.25.5-sg48) lucid; urgency=low
 
   [ Paul Lathrop ]
