@@ -1,3 +1,16 @@
+puppet (0.25.5-sg48) lucid; urgency=low
+
+  [ Paul Lathrop ]
+  * Refactor mongo integration. * Add search_setup function for
+    initializing mongo support, and remove   modification to util.rb *
+    Pull in latest mongoquery.rb from
+    http://github.com/ripienaar/mcollective-
+    plugins/blob/master/agent/registration-mongodb/puppet/mongoquery.rb
+
+  [ SimpleGeo Nerds ]
+
+ -- SimpleGeo Nerds <nerds@simplegeo.com>  Tue, 27 Jul 2010 18:18:34 +0000
+
 puppet (0.25.5-sg47) lucid; urgency=low
 
   [ Ian Eure ]
