@@ -1,3 +1,21 @@
+puppet (0.25.5-sg47) lucid; urgency=low
+
+  [ Ian Eure ]
+  * Depend on the actual package names.
+
+  [ SimpleGeo Nerds ]
+
+ -- SimpleGeo Nerds <nerds@simplegeo.com>  Mon, 26 Jul 2010 23:47:08 +0000
+
+puppet (0.25.5-sg46) lucid; urgency=low
+
+  [ Paul Lathrop ]
+  * Fix dependencies.
+
+  [ SimpleGeo Nerds ]
+
+ -- SimpleGeo Nerds <nerds@simplegeo.com>  Mon, 26 Jul 2010 20:32:08 +0000
+
 puppet (0.25.5-sg45) lucid; urgency=low
 
   [ Paul Lathrop ]
