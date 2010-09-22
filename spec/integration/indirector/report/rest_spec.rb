@@ -4,6 +4,7 @@ Dir.chdir(File.dirname(__FILE__)) { (s = lambda { |f| File.exist?(f) ? require(f
 
 require 'puppet/transaction/report'
 require 'puppet/network/server'
+require 'webrick'
 require 'puppet/network/http/webrick/rest'
 
 describe "Report REST Terminus" do
