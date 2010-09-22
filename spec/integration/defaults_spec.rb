@@ -225,9 +225,9 @@ describe "Puppet defaults" do
     end
   end
 
-  it "should have a :caname setting that defaults to the cert name" do
+  it "should have a :caname setting of 'Puppet CA: $fqdn'" do
     Puppet.settings[:certname] = "foo"
-    Puppet.settings[:ca_name].should == "foo"
+    Puppet.settings[:ca_name].should == "Puppet CA: foo"
   end
 
   it "should have a 'prerun_command' that defaults to the empty string" do
