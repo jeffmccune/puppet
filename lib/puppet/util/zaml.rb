@@ -20,6 +20,7 @@ class ZAML
   def self.dump(stuff, where='')
     z = new
     stuff.to_zaml(z)
+    Label.counter_reset
     where << z.to_s
   end
   #
@@ -61,7 +62,7 @@ class ZAML
     end
     def initialize(obj)
       @this_label_number = nil
-      @@previously_emitted_object[obj.object_id] = self
+      @@previously_emitted_object[obj] = self
     end
     def to_s
       @this_label_number ? ('&id%03d ' % @this_label_number) : ''
@@ -71,7 +72,7 @@ class ZAML
       @reference         ||= '*id%03d' % @this_label_number
     end
     def self.for(obj)
-      @@previously_emitted_object[obj.object_id]
+      @@previously_emitted_object[obj]
     end
   end
   def new_label_for(obj)
