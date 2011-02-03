@@ -62,7 +62,8 @@ class ZAML
     end
     def initialize(obj)
       @this_label_number = nil
-      @@previously_emitted_object[obj] = self
+      @obj = obj # prevent garbage collection so that object id isn't reused
+      @@previously_emitted_object[obj.object_id] = self
     end
     def to_s
       @this_label_number ? ('&id%03d ' % @this_label_number) : ''
@@ -72,7 +73,7 @@ class ZAML
       @reference         ||= '*id%03d' % @this_label_number
     end
     def self.for(obj)
-      @@previously_emitted_object[obj]
+      @@previously_emitted_object[obj.object_id]
     end
   end
   def new_label_for(obj)
