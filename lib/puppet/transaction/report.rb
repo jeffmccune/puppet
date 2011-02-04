@@ -59,6 +59,9 @@ class Puppet::Transaction::Report
     change_metric = calculate_change_metric
     add_metric(:changes, {"total" => change_metric})
     add_metric(:events, calculate_event_metrics)
+    # JJM Reject all empty status. (Luke's patch to dev@ 2011-02-04)
+    # This trims down report size and increases master processing speed
+    @resource_statuses.reject! { |res, status| status.events.empty? }
     @status = compute_status(resource_metrics, change_metric)
   end
 
