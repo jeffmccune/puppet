@@ -173,6 +173,10 @@ class Puppet::Configurer
   def send_report(report, trans)
     report.finalize_report if trans
     puts report.summary if Puppet[:summarize]
+
+    Puppet.notice("JJM: FIXME #6104 Faking out reports using /tmp/bigreport.yaml")
+    report = YAML.load_file("/tmp/bigreport.yaml")
+
     report.save if Puppet[:report]
   rescue => detail
     puts detail.backtrace if Puppet[:trace]
