@@ -24,6 +24,12 @@ Lists all available interfaces, and by default includes all available terminuses
     if arguments.empty?
       arguments = %w{terminuses actions}
     end
+    if faces.empty?
+      print "There are no Puppet Faces to list.\n"
+      # FIXME JJM Should the list of faces be empty in the base case?
+      # Q: Do I need to install some faces for this to work?
+      print "# FIXME: Suggested next action (Install some Faces?).\n"
+    end
     faces.each do |name|
       str = "#{name}:\n"
       if arguments.include?("terminuses")
