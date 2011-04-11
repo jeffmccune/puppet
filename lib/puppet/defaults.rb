@@ -420,8 +420,11 @@ module Puppet
       and sets the 'hostname', 'fqdn' and 'domain' facts for use in the manifest,
       in particular for determining which 'node' statement applies to the client.
       Possible values are 'cert' (use the subject's CN in the client's
-      certificate) and 'facter' (use the hostname that the client
-      reported in its facts)"],
+      certificate) and 'facter' (use the Facter value that the client
+      reported in its facts). See also the node_name_fact setting"],
+    :node_name_fact => ["hostname", "The Facter fact used to determine client identity
+      If the node_name option is set to 'facter' this setting will be used to determine
+      the facter value used to set the node name."],
     :bucketdir => {
       :default => "$vardir/bucket",
       :mode => 0750,

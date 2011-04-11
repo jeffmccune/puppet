@@ -103,7 +103,10 @@ class Puppet::Node
     if Puppet[:node_name] == 'cert'
       names.unshift name
     else
-      names.unshift parameters["hostname"]
+      # Feature #2128 - Allow arbitrary fact as node_name identifier
+      # JJM 2011-04-11 Use the facter variable specified by the node_name_fact
+      # configuration setting.
+      names.unshift parameters[Puppet[:node_name_fact]]
     end
     names.uniq
   end
