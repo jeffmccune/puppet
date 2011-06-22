@@ -109,7 +109,22 @@ class Puppet::Resource
   # be overridden at some point, but this works for now.
   %w{has_key? keys length delete empty? <<}.each do |method|
     define_method(method) do |*args|
-      parameters.send(method, *args)
+      if parameters.respond_to?(method)
+        parameters.send(method, *args)
+      else
+        raise Puppet::DevError, <<-METAPROGRAMMING_ERROR_MESSAGE << "Error"
+E8XXX Puppet is trying to call a method that does not exist on the receiving
+object.  This is an internal error. Please see up to date information at
+http://projects.puppetlabs.com/issues/8XXX and add a copy of --trace and
+--debug output.  If you happen to know where in your Puppet manifest this error
+is triggered from, a copy of that puppet manifest would also help resolve this
+issue quickly.
+--
+method: #{method}
+receiver: #{parameters.inspect}
+--
+        METAPROGRAMMING_ERROR_MESSAGE
+      end
     end
   end
 
