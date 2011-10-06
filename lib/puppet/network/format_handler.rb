@@ -10,6 +10,11 @@ module Puppet::Network::FormatHandler
 
     def protect(method, args)
         Puppet::Network::FormatHandler.format(format).send(method, *args)
+    rescue SocketError => details
+      # REVISIT: (JJM): Try and report the hostname and port we were trying to connect to
+      error = Puppet::Error.new("Network Connectivity Error: #{details} (#{details.class})")
+      error.set_backtrace(details.backtrace)
+      raise error
     rescue => details
         direction = method.to_s.include?("intern") ? "from" : "to"
         error = FormatError.new("Could not #{method} #{direction} #{format}: #{details}")
