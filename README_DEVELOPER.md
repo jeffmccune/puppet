@@ -60,4 +60,24 @@ byte manipulations:
 If the Regexp is not marked as ASCII-8BIT using /n, then you can expect the
 SyntaxError, invalid multibyte escape as mentioned above.
 
+## Reading UTF-8 Files ##
+
+The IO.read method does not follow the source encoding rule like String and
+Regexp do.  If a source file has an explicit encoding of UTF-8 and LANG and
+LC\_CTYPE are unset in the environment, Ruby 1.9.2 File.read() will return a
+string with an ASCII-8BIT encoding.
+
+To explicitly set the encoding of a file being read, use the following
+strategies:
+
+    # Subject to LANG and LC_CTYPE
+    >> File.read(file).encoding
+    => #<Encoding:US-ASCII>
+    # Explicit encoding
+    >> File.read(file, nil, nil, {:encoding => 'UTF-8'}).encoding
+    => #<Encoding:UTF-8>
+
+With regard to Puppet, this is particularly important when reading manifests
+for parsing.
+
 EOF
