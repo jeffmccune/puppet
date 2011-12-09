@@ -312,7 +312,10 @@ class Puppet::Parser::Lexer
   def file=(file)
     @file = file
     @line = 1
-    contents = File.exists?(file) ? File.read(file) : ""
+    # JJM To fix #11303 we need to ensure the manifest we read results in a
+    # UTF-8 encoded string.  This File.read() is where manifest files are
+    # loaded from the filesystem.
+    contents = File.exists?(file) ? File.read(file, nil, nil, {:encoding => 'UTF-8'}) : ""
     @scanner = StringScanner.new(contents)
   end
 

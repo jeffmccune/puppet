@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require 'puppet/util/cacher'
 require 'monitor'
 
