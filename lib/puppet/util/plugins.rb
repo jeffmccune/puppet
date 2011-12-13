@@ -51,7 +51,13 @@ module Puppet
     #
     # Initially just look in $LOAD_PATH
     #
-    look_in $LOAD_PATH
+    # JJM Check ENV['PUPPET_LOAD_PATH']
+    if ENV['PUPPET_LOAD_PATH'] then
+      load_path = ENV['PUPPET_LOAD_PATH'].split(':')
+    else
+      load_path = $LOAD_PATH
+    end
+    look_in load_path
     #
     # Calling methods (hooks) on the class calls the method of the same name on 
     #   all plugins that use that hook, passing in the same arguments to each

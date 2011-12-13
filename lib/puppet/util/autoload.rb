@@ -151,6 +151,12 @@ class Puppet::Util::Autoload
   end
 
   def search_directories(env=nil)
-    [module_directories(env), Puppet[:libdir].split(File::PATH_SEPARATOR), $LOAD_PATH].flatten
+    # JJM Check ENV['PUPPET_LOAD_PATH']
+    if ENV['PUPPET_LOAD_PATH'] then
+      load_path = ENV['PUPPET_LOAD_PATH'].split(':')
+    else
+      load_path = $LOAD_PATH
+    end
+    [module_directories(env), Puppet[:libdir].split(File::PATH_SEPARATOR), load_path].flatten
   end
 end

@@ -6,7 +6,13 @@ module Puppet::Interface::FaceCollection
   def self.faces
     unless @loaded
       @loaded = true
-      $LOAD_PATH.each do |dir|
+      # JJM Check ENV['PUPPET_LOAD_PATH']
+      if ENV['PUPPET_LOAD_PATH'] then
+        load_path = ENV['PUPPET_LOAD_PATH'].split(':')
+      else
+        load_path = $LOAD_PATH
+      end
+      load_path.each do |dir|
         Dir.glob("#{dir}/puppet/face/*.rb").
           collect {|f| File.basename(f, '.rb') }.
           each {|name| self[name, :current] }

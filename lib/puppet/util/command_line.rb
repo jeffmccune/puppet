@@ -35,7 +35,13 @@ module Puppet
       end
 
       def self.available_subcommands
-        absolute_appdirs = $LOAD_PATH.collect do |x|
+        # JJM Check ENV['PUPPET_LOAD_PATH']
+        if ENV['PUPPET_LOAD_PATH'] then
+          load_path = ENV['PUPPET_LOAD_PATH'].split(':')
+        else
+          load_path = $LOAD_PATH
+        end
+        absolute_appdirs = load_path.collect do |x|
           File.join(x,'puppet','application')
         end.select{ |x| File.directory?(x) }
         absolute_appdirs.inject([]) do |commands, dir|
