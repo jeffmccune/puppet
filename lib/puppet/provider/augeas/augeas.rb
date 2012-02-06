@@ -18,6 +18,8 @@ require 'strscan'
 require 'puppet/util'
 require 'puppet/util/diff'
 require 'puppet/util/package'
+require 'pathname'
+require 'tempfile'
 
 Puppet::Type.type(:augeas).provide(:augeas) do
   include Puppet::Util
@@ -332,6 +334,7 @@ Puppet::Type.type(:augeas).provide(:augeas) do
           root = resource[:root].sub(/^\/$/, "")
           saved_file = @aug.get(key).to_s.sub(/^\/files/, root)
           if File.exists?(saved_file + ".augnew")
+            debugger
             success = File.rename(saved_file + ".augnew", saved_file)
             debug(saved_file + ".augnew moved to " + saved_file)
             fail("Rename failed with return code #{success}") if success != 0

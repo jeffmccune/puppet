@@ -8,6 +8,7 @@ require 'puppet/external/lock'
 require 'monitor'
 require 'puppet/util/execution_stub'
 require 'uri'
+require 'pathname'
 
 module Puppet
   # A command failed to execute.
@@ -188,6 +189,8 @@ module Util
   # Determine in a platform-specific way whether a path is absolute. This
   # defaults to the local platform if none is specified.
   def absolute_path?(path, platform=nil)
+    # We might be given a Pathname object
+    path = String.new path unless path.kind_of? String
     # Escape once for the string literal, and once for the regex.
     slash = '[\\\\/]'
     name = '[^\\\\/]+'
@@ -480,6 +483,74 @@ module Util
     end
   end
   module_function :secure_open
+
+  # JJM this method is intended to securly replace a destination file with the
+  # contents of a source file on a POSIX filesystem.  The following
+  # functionality is provided
+  # 0: Validate both the source and the destinations are in trusted directories.
+  # 1: Obtain the real filesystem path of the source and destination without
+  # relative components (..'s) or symbolic links.  This avoids the issue of
+  # over-writing a symbolic link.
+  # 2: Validate the path as a "trusted" path by ensuring nobody could replace
+  # one of the components with a symbolic link as we proceed.
+  # 3: Open a new secure temporary file in the same directory as the destination file.
+  # 4: Copy the contents of the source file into the temporary file.
+  # 5: Set the permissions on the temporary file to match those of the desination.
+  # 6: Replace the destination file with the temporary file using rename().
+  # 7: Returns 0 upon success.
+  def secure_file_move(src_path, dst_path)
+    src_pathname = Pathname.new()
+  end
+  module_function :secure_file_move
+
+  # Validate a filesystem path is trusted.  This means nobody else could
+  # replace a path component with a symbolic link as we are working.
+  def trusted_path?(pathname)
+    # The default security settings in Windows disallow non-elevated
+    # administrators and all non-administrators from creating symbolic links.
+    # Therefore, we trust the path
+    if not Puppet.features.posix? then
+      Puppet::Util::Warnings.warnonce "Puppet is not running in a POSIX compatible environment.  Cannot determine if a path is trusted."
+      Puppet::Util::Warnings.warnonce "Assuming #{pathname} is a trusted path."
+      return true
+    end
+
+    if not absolute_path?(pathname) then
+      # Check current working directory to the root (Required)
+      return false unless trusted_path? Dir.pwd
+      pathname = Pathname.new(Dir.pwd).join pathname
+    end
+    # Clean out relative path components
+    pathname = Pathname.new(pathname).cleanpath
+    # Descend from the root to the leaf (Left to Right)
+    pathname.descend do |path|
+      begin
+        stat = path.stat
+      rescue Errno::ENOENT => e
+        Puppet.warning "REVISIT Path: #{path} does not exist."
+        next
+      end
+      debugger
+      # Is the path writable by someone other than the UID, EUID or ROOT?
+      return false unless [ 0, Process.uid, Process.euid ].include? stat.uid
+
+      # Is the path writable by someone other than the EGID or ROOT?
+      # Get a small integer for each component.  
+      mode_ary = (stat.mode & 007777).to_s(8).split('').collect { |perm| perm.to_i }
+      # Zero pad our array
+      mode_ary.unshift 0 while mode_ary.length < 4
+      # These map to the ugo flags for chmod()
+      (setflags, user_perms, group_perms, other_perms) = mode_ary
+      # Is the path group-writable?
+      return false if group_perms & 2 > 0
+      # Is the path other-writable?
+      return false if other_perms & 2 > 0
+      # Is the path 
+    end
+    # If all of our checks pass then we trust the path
+    return true
+  end
+  module_function :trusted_path?
 end
 end
 

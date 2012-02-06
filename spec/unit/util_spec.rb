@@ -545,4 +545,48 @@ describe Puppet::Util do
       end
     end
   end
+
+  describe "#trusted_path?", :fails_on_windows => true do
+    # The method is designed to handle files that don't exist.
+    let(:insecure_path) do
+      "/tmp/jeff/foo.txt"
+    end
+    let(:secure_path) do
+      "/bin/ls"
+    end
+
+    let(:has_group_writable) do
+      # We mock to avoid requiring this spec test to run as root.  We can't
+      # control the environment the spec tests run in so I think this passes
+      # the mock code smell guideline I've internalized.
+      path_walk = sequence('path_walk')
+      trustworthy_stat = mock('trustworthy_stat')
+      trustworthy_stat.stubs(:mode).returns('0755'.to_i(8))
+      trustworthy_stat.stubs(:uid).returns(0)
+      untrustworthy_stat = mock('untrustworthy_stat')
+      untrustworthy_stat.expects(:mode).returns('0775'.to_i(8))
+      untrustworthy_stat.stubs(:uid).returns(0)
+
+      start_path = Pathname.new "/some/fake/group_writable/directory/does/not/exist/file.txt"
+      start_path.descend do |path|
+        if path.basename.to_s == 'group_writable' then
+          File.expects(:stat).in_sequence(path_walk).with(path.to_s).returns(untrustworthy_stat)
+          break
+        else
+          File.expects(:stat).in_sequence(path_walk).with(path.to_s).returns(trustworthy_stat)
+        end
+      end
+      start_path.to_s
+    end
+
+    it "should be false for a tmp directory" do
+      subject.trusted_path?(insecure_path).should be_false
+    end
+    it "should be true for a secure path" do
+      subject.trusted_path?(secure_path).should be_true
+    end
+    it "should be false is there is a group-writable path element" do
+      subject.trusted_path?(has_group_writable).should be_false
+    end
+  end
 end
