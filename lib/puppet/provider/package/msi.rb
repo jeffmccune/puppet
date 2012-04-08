@@ -4,34 +4,77 @@ Puppet::Type.type(:package).provide(:msi, :parent => Puppet::Provider::Package) 
   desc "Windows package management by installing and removing MSIs.
 
     This provider requires a `source` attribute, and will accept paths to local
-    files or files on mapped drives.
-
-    This provider cannot uninstall arbitrary MSI packages; it can only uninstall
-    packages which were originally installed by Puppet."
+    files, mapped drives, UNC paths, or URLs."
 
   confine    :operatingsystem => :windows
   defaultfor :operatingsystem => :windows
 
+  has_feature :installable
+  has_feature :uninstallable
   has_feature :install_options
 
-  # This is just here to make sure we can find it, and fail if we
-  # can't.  Unfortunately, we need to do "special" quoting of the
-  # install options or msiexec.exe won't know what to do with them, if
-  # the value contains a space.
-  commands :msiexec => "msiexec.exe"
+  # From msi.h
+  INSTALLSTATE_ABSENT       =  2  # uninstalled (or action state absent but clients remain)
+  INSTALLSTATE_DEFAULT      =  5  # use default, local or source
+
+  INSTALLLEVEL_DEFAULT = 0      # install authored default
+
+  INSTALLUILEVEL_NONE     = 2    # completely silent installation
+
+  def self.pkglist
+    list = []
+
+    inst = installer
+    inst.Products.each do |guid|
+      # ignore advertised
+      next unless inst.ProductState(guid) == INSTALLSTATE_DEFAULT
+
+      hash = {}
+      hash[:productcode] = guid
+      {
+        :name => 'ProductName',
+        :version => 'VersionString',
+        :language => 'Language',
+        :packagecode => 'PackageCode',
+        :installdate => 'InstallDate',
+        :installlocation => 'InstallLocation',
+        :publisher => 'Publisher',
+        :transforms => 'Transforms'
+      }.each_pair do |k,v|
+        hash[k] = inst.ProductInfo(guid, v)
+      end
+
+      if source = inst.ProductInfo(guid, 'InstallSource') and
+         package = inst.ProductInfo(guid, 'PackageName')
+        hash[:source] = File.join(source, package)
+      end
+
+      hash[:provider] = self.name
+      hash[:ensure] = hash[:version]
+
+      list << hash
+    end
+
+    list
+  end
 
   def self.instances
-    Dir.entries(installed_listing_dir).reject {|d| d == '.' or d == '..'}.collect do |name|
-      new(:name => File.basename(name, '.yml'), :provider => :msi, :ensure => :installed)
+    pkglist.collect do |hash|
+      new(hash)
     end
   end
 
   def query
-    {:name => resource[:name], :ensure => :installed} if FileTest.exists?(state_file)
+    if hash = self.class.pkglist.find { |hash| hash[:name].casecmp(resource[:name]) == 0 }
+      hash
+    else
+      {:ensure => :absent}
+    end
   end
 
   def install
-    properties_for_command = nil
+    # properties is a string delimited by spaces, so each key value must be quoted
+    properties_for_command = ""
     if resource[:install_options]
       properties_for_command = resource[:install_options].collect do |k,v|
         property = shell_quote k
@@ -41,26 +84,11 @@ Puppet::Type.type(:package).provide(:msi, :parent => Puppet::Provider::Package) 
       end
     end
 
-    # Unfortunately, we can't use the msiexec method defined earlier,
-    # because of the special quoting we need to do around the MSI
-    # properties to use.
-    execute ['msiexec.exe', '/qn', '/norestart', '/i', shell_quote(msi_source), properties_for_command].flatten.compact.join(' ')
-
-    File.open(state_file, 'w') do |f|
-      metadata = {
-        'name'            => resource[:name],
-        'install_options' => resource[:install_options],
-        'source'          => msi_source
-      }
-
-      f.puts(YAML.dump(metadata))
-    end
+    self.class.installer.InstallProduct(resource[:source], "ACTION=INSTALL #{properties_for_command}")
   end
 
   def uninstall
-    msiexec '/qn', '/norestart', '/x', msi_source
-
-    File.delete state_file
+    self.class.installer.ConfigureProduct(resource.provider.properties[:productcode], INSTALLLEVEL_DEFAULT, INSTALLSTATE_ABSENT)
   end
 
   def validate_source(value)
@@ -69,27 +97,31 @@ Puppet::Type.type(:package).provide(:msi, :parent => Puppet::Provider::Package) 
 
   private
 
-  def msi_source
-    resource[:source] ||= YAML.load_file(state_file)['source'] rescue nil
-
-    fail("The source parameter is required when using the MSI provider.") unless resource[:source]
-
-    resource[:source]
-  end
-
-  def self.installed_listing_dir
-    listing_dir = File.join(Puppet[:vardir], 'db', 'package', 'msi')
-
-    FileUtils.mkdir_p listing_dir unless File.directory? listing_dir
-
-    listing_dir
-  end
-
-  def state_file
-    File.join(self.class.installed_listing_dir, "#{resource[:name]}.yml")
+  def self.installer
+    require 'win32ole'
+    installer = WIN32OLE.new("WindowsInstaller.Installer")
+    installer.UILevel = INSTALLUILEVEL_NONE
+    installer
   end
 
   def shell_quote(value)
     value.include?(' ') ? %Q["#{value.gsub(/"/, '\"')}"] : value
   end
 end
+
+# These are other MSI product properties that are available, but not sure
+# they provide any information.
+
+      # INSTALLPROPERTY_HELPLINK       HelpLink=
+      # INSTALLPROPERTY_HELPTELEPHONE  HelpTelephone=
+      # INSTALLPROPERTY_LOCALPACKAGE   LocalPackage=C:\WINDOWS\Installer\1afa8.msi
+      # INSTALLPROPERTY_URLINFOABOUT   URLInfoAbout=http://www.vmware.com
+      # INSTALLPROPERTY_URLUPDATEINFO  URLUpdateInfo=
+      # INSTALLPROPERTY_VERSIONMINOR
+      # INSTALLPROPERTY_VERSIONMAJOR
+      #AssignmentType=1
+      #InstanceType=0
+      #ProductID=none
+      #ProductIcon=C:\WINDOWS\Installer\{FE2F6A2C-196E-4210-9C04-2B1BC21F07EF}\ARPPRODUCTICON.exe
+      #RegCompany=
+      #RegOwner=josh
