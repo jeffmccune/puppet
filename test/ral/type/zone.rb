@@ -1,4 +1,9 @@
 #!/usr/bin/env ruby
+#
+
+require 'rubygems'
+require 'ruby-debug'
+Debugger.start
 
 require File.dirname(__FILE__) + '/../../lib/puppettest'
 
@@ -26,6 +31,7 @@ class TestZone < PuppetTest::TestCase
 
         :name => name,
         :path => root,
+        :ip   => 'bge0:192.168.0.1',
 
         :ensure => "configured" # don't want to install zones automatically
       )
@@ -37,6 +43,7 @@ class TestZone < PuppetTest::TestCase
   end
 
   def test_instances
+    pending
     list = nil
     assert_nothing_raised {
       list = Puppet::Type.type(:zone).instances
