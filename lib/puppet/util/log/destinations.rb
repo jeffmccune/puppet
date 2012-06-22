@@ -116,7 +116,7 @@ Puppet::Util::Log.newdesttype :console do
     when :info
       $stdout.puts "#{colorize(:green, 'Info')}: #{str}"
     when :debug
-      $stdout.puts "#{colorize(:cyan, 'Debug')}: #{str}"
+      $stdout.puts "#{colorize(:cyan, 'Debug')}: #{colorize(:green, msg.time.to_s)} #{str}"
     else
       $stdout.puts str
     end
