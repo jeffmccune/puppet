@@ -340,6 +340,11 @@ EOT
       :owner => "service",
       :desc => "Where each client stores the CA certificate."
     },
+    :calocalcert => { :default => "$certdir/ca.pem",
+      :mode => 0644,
+      :owner => "service",
+      :desc => "Where the ca server stores its CA certificate."
+    },
     :hostcrl => { :default => "$ssldir/crl.pem",
       :mode => 0644,
       :owner => "service",
