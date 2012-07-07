@@ -99,8 +99,36 @@ class Puppet::Network::HTTP::WEBrick
 
     raise Puppet::Error, "Could not find CA certificate" unless Puppet::SSL::Certificate.indirection.find(Puppet::SSL::CA_NAME)
 
-    results[:SSLCACertificateFile] = Puppet[:localcacert]
     results[:SSLVerifyClient] = OpenSSL::SSL::VERIFY_PEER
+
+    # JJM Webrick accepts these options
+    # lib/ruby/1.9.1/webrick/ssl.rb
+    # config[:SSLPrivateKey]
+    # config[:SSLCertificate]
+    # config[:SSLClientCA]
+    # config[:SSLExtraChainCert]
+    # config[:SSLCACertificateFile]
+    # config[:SSLCACertificatePath]
+    # config[:SSLCertificateStore]
+    # config[:SSLVerifyClient]
+    # config[:SSLVerifyDepth]
+    # config[:SSLVerifyCallback]
+    # config[:SSLTimeout]
+    # config[:SSLOptions]
+
+    # This may point to a single CA certificate or a bundle of CA certificates.
+    # Only client certificates issued by the CA certificates listed in this
+    # file will be considered valid by the server.
+    results[:SSLCACertificateFile] = Puppet.settings[:ssl_server_ca_chain_auth]
+
+    # SSLExtraChainCert should point to a bundle building trust to the
+    # authorizing CA certs listed in the SSLCACertificateFile.  Certificates
+    # listed in this chain build trust to CA auth certificates listed in
+    # ssl_server_ca_chain_auth.
+    results[:SSLExtraChainCert] = Puppet.settings[:ssl_server_ca_chain_trust]
+
+    # SSLClientCA - Additional CA certificates to send to the client connection
+    results[:SSLClientCA] = Puppet.settings[:ssl_server_ca_chain_client]
 
     results[:SSLCertificateStore] = host.ssl_store
 

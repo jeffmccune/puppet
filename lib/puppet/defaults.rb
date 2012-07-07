@@ -521,6 +521,48 @@ EOT
       :desc => "Where the host's certificate revocation list can be found.
         This is distinct from the certificate authority's CRL."
     },
+    :ssl_server_ca_chain_auth => {
+      :default => "$localcacert",
+      :type    => :file,
+      :mode    => 0644,
+      :owner   => "service",
+      :desc    => <<-EODESC
+File of concatenated PEM-encoded CA Certificates for Client Auth.  This file
+should contain a list of CA certificates used to authenticate client
+connections.  Please see the releated ssl_server_ca_chain_trust setting.
+    EODESC
+    },
+    :ssl_server_ca_chain_trust => {
+      :default => "$localcacert",
+      :type    => :file,
+      :mode    => 0644,
+      :owner   => "service",
+      :desc    => <<-EODESC
+File of concatenated PEM-encoded CA Certificates to anchor trust.  This file
+should contain a list of CA certificates used to anchor and build trust to
+other CA certificates.  CA certificates listed only in this file will not
+be used to authenticate client connections.  Please see the releated
+ssl_server_ca_chain_auth setting.
+    EODESC
+    },
+    :ssl_server_ca_chain_client => {
+      :default => "$ssl_server_ca_chain_trust",
+      :type    => :file,
+      :mode    => 0644,
+      :owner   => "service",
+      :desc    => <<-EODESC
+Additional CA certificates to send to the client connection.  This setting may
+be used to help the client fill in any gaps between the certificates it trusts
+using ssl_client_ca_chain_trust and certificates used to authenticate the
+server using ssl_client_ca_chain_auth settings.
+    EODESC
+    },
+    :ssl_server_verify_depth => {
+      :default => 7,
+      :desc    => <<-EODESC
+Maximum depth of CA Certificates when authenticating client SSL connections.
+    EODESC
+    },
     :certificate_revocation => {
         :default  => true,
         :type     => :boolean,
