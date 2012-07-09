@@ -5,6 +5,7 @@ require 'thread'
 
 require 'puppet/ssl/certificate'
 require 'puppet/ssl/certificate_revocation_list'
+require 'puppet/util/x509_cert_loader'
 
 class Puppet::Network::HTTP::WEBrick
   def initialize(args = {})
@@ -116,19 +117,29 @@ class Puppet::Network::HTTP::WEBrick
     # config[:SSLTimeout]
     # config[:SSLOptions]
 
+    debugger
+
     # This may point to a single CA certificate or a bundle of CA certificates.
     # Only client certificates issued by the CA certificates listed in this
     # file will be considered valid by the server.
     results[:SSLCACertificateFile] = Puppet.settings[:ssl_server_ca_chain_auth]
 
     # SSLExtraChainCert should point to a bundle building trust to the
-    # authorizing CA certs listed in the SSLCACertificateFile.  Certificates
-    # listed in this chain build trust to CA auth certificates listed in
-    # ssl_server_ca_chain_auth.
-    results[:SSLExtraChainCert] = Puppet.settings[:ssl_server_ca_chain_trust]
+    # authorizing CA certs listed in the ssl_server_ca_chain_auth setting.
+    # These certificates are not directly used for authentication, they're
+    # indirectly used to build trust.
+    # JJM - SSLExtraChainCert result expects an array of OpenSSL::X509::Certificate instances
+    # results[:SSLExtraChainCert] = nil
+    trust_chain_loader = Puppet::Util::X509CertLoader.new_from_file(Puppet.settings[:ssl_server_ca_chain_trust])
+    x509_chain_certs = trust_chain_loader.certificates
+    results[:SSLExtraChainCert] = x509_chain_certs
 
     # SSLClientCA - Additional CA certificates to send to the client connection
-    results[:SSLClientCA] = Puppet.settings[:ssl_server_ca_chain_client]
+    # This expects a single or an array of OpenSSL::X509::Certificate instances
+    # results[:SSLClientCA] = ssl_server_ca_chain_client.certificate.content
+    client_chain_loader = Puppet::Util::X509CertLoader.new_from_file(Puppet.settings[:ssl_server_ca_chain_client])
+    x509_client_certs = client_chain_loader.certificates
+    results[:SSLClientCA] = x509_client_certs
 
     results[:SSLCertificateStore] = host.ssl_store
 
