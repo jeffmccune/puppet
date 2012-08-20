@@ -447,6 +447,20 @@ describe Puppet::Util::Settings do
       @settings[:one].should == 65
     end
 
+    it "should convert splitted lines in the configuration file to a single line" do
+      text = "[main]
+      one = long \\
+        line
+      vardir = C:\\puppet\\var\\
+      confdir = C:\\puppet\\etc\\
+      "
+      @settings.expects(:read_file).returns(text)
+      @settings.parse
+      @settings[:one].should == "long line"
+      @settings[:vardir].should == "C:\\puppet\\var\\"
+      @settings[:confdir].should == "C:\\puppet\\etc\\"
+    end
+
     it "should support specifying all metadata (owner, group, mode) in the configuration file" do
       @settings.setdefaults :section, :myfile => ["/myfile", "a"]
 
