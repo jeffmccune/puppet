@@ -1,4 +1,29 @@
 #!/usr/bin/env ruby
 
+require 'rubygems'
+require 'pry'
+
+# We're wrapping ourselves around the File.open method.
+# As described at: http://goo.gl/lDsv6
+class File
+  JJM_WHITELIST = [ /pidlock.rb:39/ ]
+
+  class << self; alias jjm_orig_open open; end
+
+  def self.open(name, *rest, &block)
+    # Check the whitelist for any "good" File.open calls against the
+    # puppetdlock file
+    white_listed = caller(0).find do |line|
+      JJM_WHITELIST.find do |re|
+        re.match(line)
+      end
+    end
+
+    binding.pry if name =~ /puppetdlock/ and not white_listed
+    jjm_orig_open(name, *rest, &block)
+  end
+end
+
+
 require 'puppet/util/command_line'
 Puppet::Util::CommandLine.new.execute

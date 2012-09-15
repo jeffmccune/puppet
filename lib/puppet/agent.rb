@@ -26,15 +26,8 @@ class Puppet::Agent
 
   # Perform a run with our client.
   def run(*args)
-    if running?
-      Puppet.notice "Run of #{client_class} already in progress; skipping"
-      return
-    end
-    if disabled?
-      Puppet.notice "Skipping run of #{client_class}; administratively disabled; use 'puppet agent --enable' to re-enable."
-      return
-    end
-
+    # XXX Lockfile checking moved to into lock method.  We're trying to
+    # identify what is causing the zero length puppetdlock to be created.
     result = nil
     block_run = Puppet::Application.controlled_run do
       splay

@@ -18,6 +18,17 @@ module Puppet::Agent::Locker
   # Yield if we get a lock, else do nothing.  Return
   # true/false depending on whether we get the lock.
   def lock
+    if running?
+      Puppet.notice "Run of #{client_class} already in progress; skipping"
+      return false
+    end
+    if disabled?
+      Puppet.notice "Skipping run of #{client_class}; administratively disabled; use 'puppet agent --enable' to re-enable."
+      # XXX We shouldn't get here.  What led us here? (Check the backtrace)
+      binding.pry
+      return false
+    end
+
     if lockfile.lock
       begin
         yield

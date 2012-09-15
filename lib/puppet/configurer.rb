@@ -30,6 +30,9 @@ class Puppet::Configurer
 
   # How to lock instances of this class.
   def self.lockfile_path
+    # XXX - Look at the backtrace and see if the gost is about to use this to
+    # call open().
+    # binding.pry
     Puppet[:puppetdlockfile]
   end
 

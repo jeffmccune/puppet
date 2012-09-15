@@ -553,13 +553,23 @@ class Puppet::Util::Settings
     @config.values.find_all { |value| value.is_a?(FileSetting) }.each do |file|
       next unless (sections.nil? or sections.include?(file.section))
       next unless resource = file.to_resource
+      # XXX We _could_ special-case the puppetdlock file at this point.  This
+      # seems like a bad idea.  Better, I think to enable FileSetting instances
+      # to opt out of the Settings catalog and honor that preference.
       next if catalog.resource(resource.ref)
 
+      # XXX This appears to be where the puppetdlock file gets added to the
+      # catalog.  The catalog creates a zero byte file when it manages the file
+      # resource.
+      binding.pry if resource.to_s =~ /puppetdlock/
       catalog.add_resource(resource)
     end
 
     add_user_resources(catalog, sections)
 
+    # XXX We could take this opportunity to wrap the catalog.apply method.
+    # This would allow us to figure out exactly when the Settings catalog gets
+    # applied.
     catalog
   end
 
