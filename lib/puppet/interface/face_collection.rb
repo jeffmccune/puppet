@@ -126,7 +126,7 @@ module Puppet::Interface::FaceCollection
       require path
       return true
     rescue ScriptError => detail
-      if detail =~ /file -- #{path}$/
+      if detail.message =~ %r{file -- puppet/face/([^/]+/)?#{name}$}
         Puppet.debug "Could not `require \"#{path}\"` (Using the $LOAD_PATH) #{detail}"
       else
         Puppet.err("Failed to load face #{name}:\n#{detail}")
