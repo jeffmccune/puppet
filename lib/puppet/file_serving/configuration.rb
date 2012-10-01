@@ -29,6 +29,10 @@ class Puppet::FileServing::Configuration
   def find_mount(mount_name, environment)
     # Reparse the configuration if necessary.
     readconfig
+
+    # Display a friendly warning about module path element
+    binding.pry
+
     # This can be nil.
     mounts[mount_name]
   end
