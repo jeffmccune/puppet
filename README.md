@@ -1,6 +1,8 @@
 Puppet
 ======
 
+ARE PULL REQUESTS AFFECTED IF THEIR BASE BRANCH IS DELETED?
+
 Puppet, an automated administrative engine for your Linux and Unix systems, performs
 administrative tasks (such as adding users, installing packages, and updating server
 configurations) based on a centralized specification.
