@@ -3,7 +3,19 @@ module Puppet::Util::ReferenceSerializer
   def unserialize_value(val)
     case val
     when /^--- /
-      YAML.load(val)
+      begin
+        YAML.load(val)
+      rescue Exception => detail
+        if detail.to_s.match(/allocator/i)
+          # JJM FIXME Debug output for puppet-users thread http://goo.gl/a7cqA
+          # This requires a JSON library, available with `gem install multi_json`
+          file = "/tmp/for_jeff.json"
+          if not File.exists?(file)
+            Puppet.debug "Wrote val to #{file}"
+            File.open(file, "w+") { |f| f.puts(PSON.dump(val)) }
+          end
+        end
+      end
     when "true"
       true
     when "false"
