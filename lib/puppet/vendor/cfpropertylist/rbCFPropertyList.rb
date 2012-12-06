@@ -101,7 +101,11 @@ require dirname + '/rbBinaryCFPropertyList.rb'
 require 'iconv' unless "".respond_to?("encode")
 
 begin
+  # In Ruby 1.8.7 it needs to be below
   Enumerable::Enumerator.new([])
+  #
+  # In Ruby 1.9.3 it needs to be below
+  #Enumerator.new([])
 rescue NameError => e
   module Enumerable
     class Enumerator
