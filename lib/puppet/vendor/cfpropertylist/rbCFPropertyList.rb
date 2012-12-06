@@ -101,12 +101,12 @@ require dirname + '/rbBinaryCFPropertyList.rb'
 require 'iconv' unless "".respond_to?("encode")
 
 begin
-  # In Ruby 1.8.7 it needs to be below
   Enumerable::Enumerator.new([])
-  #
-  # In Ruby 1.9.3 it needs to be below
-  #Enumerator.new([])
-rescue NameError => e
+
+# PUPPET-SPECIFIC: We're rescuing the ArgumentError in the event that
+#                  Enumerable::Enumerator has been loaded before in a
+#                  previous require in Puppet.
+rescue NameError, ArgumentError => e
   module Enumerable
     class Enumerator
     end
