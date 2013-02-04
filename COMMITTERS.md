@@ -183,3 +183,29 @@ master branches are being pushed at the same time.
 
 That's it!  The committer then updates the pull request, updates the issue in
 our issue tracker, and keeps an eye on the build status.
+
+Branches
+====
+
+Our continuous integration process runs against three base branches named
+_master_, _stable_ and _security_.  The base branch that receives a change set
+depends on the type of behavior changed by the set of patches.  The list below
+describes the type of behavior changes each branch should receive.
+
+ * master - New behaviors and new functionality should be introduced into the
+   master branch.
+ * stable - Patches that fix bugs in the most recent release or release
+   candidate should be introduced into the stable branch.
+ * security - Patches that fix security issues in supported releases should be
+   introduced into the security branch.
+
+The stable branch will periodically be reset to the most recent minor version
+release.  This branch is intended to allow bug fixes to minor versions without
+the overhead of placing version numbers in the branch name itself.  Version
+numbers in the branch name are a problem because some of our CI tools depend on
+the branch name and version numbers would require the tools to be reconfigured.
+
+The security branch will have the change set merged into each of the other
+branches independently of one another.  The stable branch, however, will not be
+"merged up" into master.  The bug fixes need to be rebased on each of stable
+and master and merged separately from one another.
