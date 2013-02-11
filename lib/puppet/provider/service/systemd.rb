@@ -1,10 +1,9 @@
 # Manage systemd services using /bin/systemctl
 
 Puppet::Type.type(:service).provide :systemd, :parent => :base do
-  desc "Manages `systemd` services using `/bin/systemctl`."
+  desc "Manages `systemd` services using the `systemctl` command."
 
-  systemctl_binary = File.executable?('/usr/bin/systemctl') ? '/usr/bin/systemctl' : '/bin/systemctl' 
-  commands :systemctl => systemctl_binary
+  commands :systemctl => "systemctl"
 
   #defaultfor :osfamily => [:redhat, :suse]
 
