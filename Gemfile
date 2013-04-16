@@ -1,10 +1,10 @@
 source "https://rubygems.org"
 
 def location_for(place, fake_version = nil)
-  if place =~ /^(git:[^#]*)#(.*)/
-    [fake_version, { :git => $1, :branch => $2, :require => false }].compact
-  elsif place =~ /^file:\/\/(.*)/
-    [fake_version, { :path => File.expand_path($1), :require => false }].compact
+  if mdata = place.match(/^((git|https?):[^#]*)#(.*)/)
+    [fake_version, { :git => mdata[1], :branch => mdata[3], :require => false }].compact
+  elsif mdata = place.match(/^file:\/\/(.*)/)
+    [fake_version, { :path => File.expand_path(mdata[1]), :require => false }].compact
   else
     [place, { :require => false }]
   end
