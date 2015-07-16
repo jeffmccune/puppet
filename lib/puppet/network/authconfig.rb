@@ -92,7 +92,13 @@ module Puppet
 
     def initialize(rights=nil)
       @rights = rights || Puppet::Network::Rights.new
-      insert_default_acl
+
+      if Puppet.settings[:bypass_authorization] == true
+        Puppet.info("Bypassing insertion of default ACL because " +
+                        "bypass_authorization is true")
+      else
+        insert_default_acl
+      end
     end
   end
 end
