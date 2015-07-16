@@ -1180,7 +1180,16 @@ EOT
       :desc       => "Whether to only search for the complete
             hostname as it is in the certificate when searching for node information
             in the catalogs.",
-    }
+    },
+    :bypass_authorization => {
+      :type    => :boolean,
+      :default => false,
+      :desc    => "If false perform authorization checks using auth.conf rules.
+      If true, bypass authorization checks entirely.  Authorization should be
+      handled externally, e.g. using trapperkeeper-authorization.  Note, this
+      setting does not affect authentication behaviors, it only affects
+      authorization.",
+    },
   )
 
   define_settings(:device,
