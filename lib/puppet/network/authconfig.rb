@@ -78,6 +78,12 @@ module Puppet
     # raise an Puppet::Network::AuthorizedError if the request
     # is denied.
     def check_authorization(method, path, params)
+      if Puppet.settings[:bypass_authorization] == true
+        Puppet.debug "Bypassing authorization check for call " +
+          "#{method} on #{path} because bypass_authorization is true"
+        return
+      end
+
       if authorization_failure_exception = @rights.is_request_forbidden_and_why?(method, path, params)
         Puppet.warning("Denying access: #{authorization_failure_exception}")
         raise authorization_failure_exception
